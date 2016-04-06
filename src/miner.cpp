@@ -125,7 +125,10 @@ CBlock* CreateNewBlock(CWallet* pwallet, bool fProofOfStake, int64_t* pFees)
     if (!fProofOfStake)
     {
         CReserveKey reservekey(pwallet);
-        txNew.vout[0].scriptPubKey.SetDestination(reservekey.GetReservedKey().GetID());
+        CPubKey pubkey;
+        if (!reservekey.GetReservedKey(pubkey))
+            return NULL;
+        txNew.vout[0].scriptPubKey.SetDestination(pubkey.GetID());
     }
     else
     {
@@ -521,7 +524,7 @@ void StakeMiner(CWallet *pwallet)
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
 
     // Make this thread recognisable as the mining thread
-    RenameThread("ClickCoin-miner");
+    RenameThread("1337-miner");
 
     bool fTryToSync = true;
 
